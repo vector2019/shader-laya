@@ -1,5 +1,7 @@
 import shader1Vs from "./shader1.vs"
 import shader1Fs from "./shader1.fs"
+import vertexColorVs from './vertexColor/vertexColor.vs'
+import vertexColorFs from './vertexColor/vertexColor.fs'
 
 export default class MyShader {
 
@@ -11,13 +13,18 @@ export default class MyShader {
 
         var uniformMap = {
             'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
-            'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_Time': Laya.Shader3D.PERIOD_SCENE
         };
 
-        var shader = Laya.Shader3D.add("shader1");
-        var subShader = new Laya.SubShader(attributeMap, uniformMap);
-        shader.addSubShader(subShader);
-        subShader.addShaderPass(shader1Vs, shader1Fs);
+        // var shader = Laya.Shader3D.add("shader1");
+        // var subShader = new Laya.SubShader(attributeMap, uniformMap);
+        // shader.addSubShader(subShader);
+        // subShader.addShaderPass(shader1Vs, shader1Fs);
+
+        let vertexColor = Laya.Shader3D.add('vertexColor');
+        let subShader = new Laya.SubShader(attributeMap, uniformMap);
+        vertexColor.addSubShader(subShader);
+        subShader.addShaderPass(vertexColorVs, vertexColorFs);
 
     }
 }

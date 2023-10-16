@@ -3,6 +3,7 @@ import HollowCylinderMesh, { SanMesh } from "./3dModel/HollowCylinderMesh";
 import MeshData from "./3dModel/MeshData";
 import RotateScript from "./RotateScript";
 import { shader1Meterial } from "./shader1Material";
+import { vertexMaterial } from "./vertexColor/vertexMaterial";
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
  * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
@@ -32,14 +33,17 @@ export default class GameUI extends ui.test.TestSceneUI {
         var box: Laya.MeshSprite3D = scene.addChild(new Laya.MeshSprite3D(mesh.createMesh())) as Laya.MeshSprite3D;
         box.transform.position = new Laya.Vector3(0, 1, 0);
 
-        var material: Laya.BlinnPhongMaterial = new Laya.BlinnPhongMaterial();
+        // var material: Laya.BlinnPhongMaterial = new Laya.BlinnPhongMaterial();
         // Laya.Texture2D.load("res/layabox.png", Laya.Handler.create(null, function (tex: Laya.Texture2D) {
         //     material.albedoTexture = tex;
         // }));
-        material.enableVertexColor = true;
+        // material.enableVertexColor = true;
+
+
+        let material = new vertexMaterial();
 
         box.meshRenderer.material = material;
 
-        box.addComponent(RotateScript);
+        // box.addComponent(RotateScript);
     }
 }

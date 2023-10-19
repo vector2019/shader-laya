@@ -6,6 +6,7 @@ import BoxMesh from "./VertexUV/mesh/BoxMesh";
 import { shader1Meterial } from "./shader1Material";
 import { vertexMaterial } from "./vertexColor/vertexMaterial";
 import { vertexWaveMaterial } from "./vertexWave/vertexWaveMaterial";
+import UVAniMaterial from "./VertexUV/UVAni/UVAniMaterail";
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
  * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
@@ -28,17 +29,27 @@ export default class GameUI extends ui.test.TestSceneUI {
         directionLight.color = new Laya.Vector3(0.6, 0.6, 0.6);
         directionLight.transform.worldMatrix.setForward(new Laya.Vector3(1, -1, 0));
 
-        var meshData: MeshData = BoxMesh.createBox(1.5, 1.5, 1);
-        //添加自定义模型
-        var box: Laya.MeshSprite3D = scene.addChild(new Laya.MeshSprite3D(meshData.mesh)) as Laya.MeshSprite3D;
-        box.transform.position = new Laya.Vector3(0, 3, 0);
+        // var meshData: MeshData = BoxMesh.createBox(1.5, 1.5, 1);
+        // //添加自定义模型
+        // var box: Laya.MeshSprite3D = scene.addChild(new Laya.MeshSprite3D(meshData.mesh)) as Laya.MeshSprite3D;
+        // box.transform.position = new Laya.Vector3(0, 3, 0);
 
-        var material: vertexWaveMaterial = new vertexWaveMaterial();
-        Laya.Texture2D.load("res/layabox.png", Laya.Handler.create(this, (tex) => {
-            material.albedoTexture = tex;
-            material.tilingOffset = new Laya.Vector4(2, 2, 0, 0);
+        // var material: vertexWaveMaterial = new vertexWaveMaterial();
+        // Laya.Texture2D.load("res/layabox.png", Laya.Handler.create(this, (tex) => {
+        //     material.albedoTexture = tex;
+        //     material.tilingOffset = new Laya.Vector4(2, 2, 0, 0);
+        // }))
+        // box.meshRenderer.material = material;
+
+        var cube: Laya.MeshSprite3D = scene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(1, 1, 1))) as Laya.MeshSprite3D;
+        cube.transform.position = new Laya.Vector3(0, 3, 0);
+
+        var material2: UVAniMaterial = new UVAniMaterial();
+        Laya.Texture2D.load("res/uvani/BaShen2.png", Laya.Handler.create(this, (tex) => {
+            material2.albedoTexture = tex;
         }))
 
-        box.meshRenderer.material = material;
+        cube.meshRenderer.sharedMaterial = material2;
+
     }
 }

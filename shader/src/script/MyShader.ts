@@ -70,8 +70,11 @@ export default class MyShader {
         var uniformMap = {
             'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
             'u_Time': Laya.Shader3D.PERIOD_SCENE,
-            'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+
             'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_Width': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_Speed': Laya.Shader3D.PERIOD_MATERIAL
         }
 
         let vertexWave = Laya.Shader3D.add('Water');

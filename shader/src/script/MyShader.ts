@@ -13,6 +13,9 @@ import UVAniFs from './VertexUV/UVAni/UVAni.fs';
 import WaterVs from './Water/Water.vs';
 import WaterFs from './Water/Water.fs';
 
+import BlurVs from './Blur/Blur.vs';
+import BlurFs from './Blur/Blur.fs';
+
 export default class MyShader {
 
 
@@ -36,6 +39,7 @@ export default class MyShader {
 
         this.initUVAniMaterial();
         this.initWaterMaterial();
+        this.initBlurMaterial();
     }
 
     public static initUVAniMaterial() {
@@ -82,4 +86,49 @@ export default class MyShader {
         vertexWave.addSubShader(subShader);
         subShader.addShaderPass(WaterVs, WaterFs);
     }
+
+
+    public static initBlurMaterial() {
+        var attributeMap = {
+            'a_Position': Laya.VertexMesh.MESH_POSITION0,
+            'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
+        }
+
+
+        var uniformMap = {
+            'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
+
+            'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_BlurWidth': Laya.Shader3D.PERIOD_MATERIAL
+        }
+
+        var shader = Laya.Shader3D.add("MYBLUR");
+        var subShader = new Laya.SubShader(attributeMap, uniformMap);
+        shader.addSubShader(subShader);
+        subShader.addShaderPass(BlurVs, BlurFs);
+    }
+
+    public static initBlurMaterial() {
+        var attributeMap = {
+            'a_Position': Laya.VertexMesh.MESH_POSITION0,
+            'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
+        }
+
+
+        var uniformMap = {
+            'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
+
+            'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_BlurWidth': Laya.Shader3D.PERIOD_MATERIAL
+        }
+
+        var shader = Laya.Shader3D.add("MYBLUR");
+        var subShader = new Laya.SubShader(attributeMap, uniformMap);
+        shader.addSubShader(subShader);
+        subShader.addShaderPass(BlurVs, BlurFs);
+    }
+
+
 }

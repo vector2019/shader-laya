@@ -16,6 +16,9 @@ import WaterFs from './Water/Water.fs';
 import BlurVs from './Blur/Blur.vs';
 import BlurFs from './Blur/Blur.fs';
 
+import MasicVs from './masic/masic.vs';
+import MasicFs from './masic/masic.fs';
+
 export default class MyShader {
 
 
@@ -40,6 +43,7 @@ export default class MyShader {
         this.initUVAniMaterial();
         this.initWaterMaterial();
         this.initBlurMaterial();
+        this.initMasicMaterial();
     }
 
     public static initUVAniMaterial() {
@@ -100,7 +104,8 @@ export default class MyShader {
 
             'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
             'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
-            'u_BlurWidth': Laya.Shader3D.PERIOD_MATERIAL
+            'u_MasicSize': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_TexSize': Laya.Shader3D.PERIOD_MATERIAL
         }
 
         var shader = Laya.Shader3D.add("MYBLUR");
@@ -109,7 +114,7 @@ export default class MyShader {
         subShader.addShaderPass(BlurVs, BlurFs);
     }
 
-    public static initBlurMaterial() {
+    public static initMasicMaterial() {
         var attributeMap = {
             'a_Position': Laya.VertexMesh.MESH_POSITION0,
             'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
@@ -121,13 +126,15 @@ export default class MyShader {
 
             'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
             'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
-            'u_BlurWidth': Laya.Shader3D.PERIOD_MATERIAL
+            'u_BlurWidth': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_MasicSize': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_TexSize': Laya.Shader3D.PERIOD_MATERIAL
         }
 
-        var shader = Laya.Shader3D.add("MYBLUR");
+        var shader = Laya.Shader3D.add("MASIC");
         var subShader = new Laya.SubShader(attributeMap, uniformMap);
         shader.addSubShader(subShader);
-        subShader.addShaderPass(BlurVs, BlurFs);
+        subShader.addShaderPass(MasicVs, MasicFs);
     }
 
 

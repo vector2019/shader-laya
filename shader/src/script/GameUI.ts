@@ -10,6 +10,7 @@ import UVAniMaterial from "./VertexUV/UVAni/UVAniMaterail";
 import WaterMaterial from "./Water/WaterMaterial";
 import BlurMaterial from "./Blur/BlurMaterial";
 import MasicMaterial from "./masic/masicMaterial";
+import TerrainMaterial from "./Terrain/TerrainMaterial";
 /**
  * 本示例采用非脚本的方式实现，而使用继承页面基类，实现页面逻辑。在IDE里面设置场景的Runtime属性即可和场景进行关联
  * 相比脚本方式，继承式页面类，可以直接使用页面定义的属性（通过IDE内var属性定义），比如this.tipLbll，this.scoreLbl，具有代码提示效果
@@ -70,11 +71,30 @@ export default class GameUI extends ui.test.TestSceneUI {
         directionLight.transform.worldMatrix.setForward(new Laya.Vector3(1, -1, 0));
 
         //添加自定义模型
-        this.createBox();
+        // this.createBox();
 
         this.hSlider.on(Laya.Event.CHANGE, this, this.onChange);
 
+        Laya.loader.load([
+            "res/bg1.jpg",
+            "res/bg2.jpg"
+        ], Laya.Handler.create(this, this.onLoad3DComplete));
+
     }
+
+
+
+    private onLoad3DComplete(): void {
+        var box: Laya.MeshSprite3D = this.gameScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createPlane(10, 20, 100, 100))) as Laya.MeshSprite3D;
+        box.transform.position = new Laya.Vector3(0, 0, -7);
+
+        var material: TerrainMaterial = new TerrainMaterial();
+        material.albedoTexture = Laya.loader.getRes("res/bg1.jpg");
+        material.secondTexture = Laya.loader.getRes("res/bg2.jpg");
+
+        box.meshRenderer.material = material;
+    }
+
 
     private cube: Laya.MeshSprite3D = null;
     private createBox(): void {
@@ -95,8 +115,12 @@ export default class GameUI extends ui.test.TestSceneUI {
         // var matterial: BlurMaterial = this.cube.meshRenderer.sharedMaterial as BlurMaterial;
         // matterial.blurWidth = blurWidth;
 
-        var blurWidth = Math.floor(this.hSlider.value) * 8;
-        let material: MasicMaterial = this.cube.meshRenderer.sharedMaterial as MasicMaterial;
-        material.masicSize = blurWidth;
+        // var blurWidth = Math.floor(this.hSlider.value) * 8;
+        // let material: MasicMaterial = this.cube.meshRenderer.sharedMaterial as MasicMaterial;
+        // material.masicSize = blurWidth;
+
+        let width = this.hSlider.value / this.hSlider.max * 8.0;
+        let material: TerrainMaterial = this.cube.meshRenderer.sharedMaterial as TerrainMaterial;
+        material.width = width;
     }
 }

@@ -5,6 +5,7 @@ import Scene=Laya.Scene;
 var REG: Function = Laya.ClassUtils.regClass;
 export module ui.test {
     export class TestSceneUI extends Scene {
+		public hSlider:Laya.HSlider;
         constructor(){ super()}
         createChildren():void {
             super.createChildren();

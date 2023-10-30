@@ -154,7 +154,7 @@ export default class MyShader {
             'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
             'u_AlbedoTextrure': Laya.Shader3D.PERIOD_MATERIAL,
             'u_SecondTexture': Laya.Shader3D.PERIOD_MATERIAL,
-            // 'u_Width': Laya.Shader3D.PERIOD_MATERIAL,
+            'u_Width': Laya.Shader3D.PERIOD_MATERIAL,
         };
 
         var shader = Laya.Shader3D.add("Terrain");

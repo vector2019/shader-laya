@@ -62,8 +62,8 @@ export default class GameUI extends ui.test.TestSceneUI {
 
         //添加照相机
         var camera: Laya.Camera = (this.gameScene.addChild(new Laya.Camera(0, 0.1, 100))) as Laya.Camera;
-        camera.transform.translate(new Laya.Vector3(0, 3, 3));
-        camera.transform.rotate(new Laya.Vector3(0, 0, 0), true, false);
+        camera.transform.translate(new Laya.Vector3(0, 8, 8));
+        camera.transform.rotate(new Laya.Vector3(-30, 0, 0), true, false);
 
         //添加方向光
         var directionLight: Laya.DirectionLight = this.gameScene.addChild(new Laya.DirectionLight()) as Laya.DirectionLight;
@@ -93,6 +93,7 @@ export default class GameUI extends ui.test.TestSceneUI {
         material.secondTexture = Laya.loader.getRes("res/bg2.jpg");
 
         box.meshRenderer.material = material;
+        this.cube = box;
     }
 
 

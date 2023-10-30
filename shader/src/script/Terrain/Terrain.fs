@@ -1,23 +1,37 @@
-#include "Lighting.glsl";
+#ifdef GL_FRAGMENT_PRECISION_HIGH
+    precision highp float;
+#else
+    precision mediump float;
+#endif
 
-uniform mat4 u_MvpMatrix;
-// uniform float u_Width;
-attribute vec4 a_Position;
-attribute vec2 a_TexCoord0;
 
-// varying vec2 v_TexCoord0;
-// varying float v_Addy;
+uniform vec4 u_AlbedoColor;
+
+#ifdef ALBEDOTEXTURE
+    uniform sampler2D u_AlbedoTextrure;
+#endif
+
+#ifdef SECONDTEXTURE
+    uniform sampler2D u_SecondTexture;
+#endif
+
+
+varying float v_Addy;
+varying vec2 v_TexCoord0;
 
 void main()
 {
-    // v_TexCoord0 = a_TexCoord0;
-    // float PI = 3.141592653589;
-    // float len = distance(vec2(a_Position.x , a_Position.z) , vec2(0.0));
-    // len = clamp(len , 0.0 , u_Width);
-    // float addy = sin(len * PI / u_Width) + 1.0;
-    // vec4 position = vec4(a_Position.x , a_Position.y + addy , a_Position.z , a_Position.w);
-    // v_Addy = addy;
+    vec4 albedo = u_AlbedoColor;
 
-    gl_Position = u_MvpMatrix * a_Position;
-    gl_Position = remapGLPositionZ(gl_Position);
+    #ifdef ALBEDOTEXTURE
+        albedo *= texture2D(u_AlbedoTextrure, v_TexCoord0);
+    #endif
+
+    #ifdef SECONDTEXTURE
+        vec4 secondColor = texture2D(u_SecondTexture, v_TexCoord0);
+        float addy = v_Addy / 2.0;
+        albedo = mix(albedo, secondColor, addy);
+    #endif
+
+    gl_FragColor = albedo;
 }

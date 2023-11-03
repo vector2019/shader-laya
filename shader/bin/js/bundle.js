@@ -57,76 +57,106 @@
     MasicMaterial.TEXSIZE = Laya.Shader3D.propertyNameToID("u_TexSize");
     MasicMaterial.SHADERDEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
 
-    class TerrainMaterial extends Laya.Material {
+    class BonesMaterial extends Laya.Material {
         constructor() {
             super();
-            this.setShaderName("Terrain");
+            this.setShaderName("Bones");
             this.albedoColor = new Laya.Vector4(1, 1, 1, 1);
-            this.width = 4.0;
-        }
-        set width(value) {
-            this._shaderValues.setNumber(TerrainMaterial.WIDTH, value);
-        }
-        set secondTexture(value) {
-            if (value) {
-                this._shaderValues.addDefine(TerrainMaterial.DEFINE_SECONDTEXTURE);
-            }
-            else {
-                this._shaderValues.removeDefine(TerrainMaterial.DEFINE_SECONDTEXTURE);
-            }
-            this._shaderValues.setTexture(TerrainMaterial.SECONDTEXTURE, value);
-        }
-        set albedoColor(value) {
-            this._shaderValues.setVector(TerrainMaterial.ALBEDOCOLOR, value);
-        }
-        get albedoColor() {
-            return this._shaderValues.getVector(TerrainMaterial.ALBEDOCOLOR);
         }
         set albedoTexture(value) {
             if (value) {
-                this._shaderValues.addDefine(TerrainMaterial.DEFINE_ALBEDOTEXTURE);
+                this._shaderValues.addDefine(BonesMaterial.SHADERDEFINE_ALBEDOTEXTURE);
             }
             else {
-                this._shaderValues.removeDefine(TerrainMaterial.DEFINE_ALBEDOTEXTURE);
+                this._shaderValues.removeDefine(BonesMaterial.SHADERDEFINE_ALBEDOTEXTURE);
             }
-            this._shaderValues.setTexture(TerrainMaterial.ALBEDOTEXTURE, value);
+            this._shaderValues.setTexture(BonesMaterial.ALBEDOTEXTURE, value);
         }
-        get albedoTexture() {
-            return this._shaderValues.getTexture(TerrainMaterial.ALBEDOTEXTURE);
+        set albedoColor(value) {
+            this._shaderValues.setVector(BonesMaterial.ALBEDOCOLOR, value);
         }
     }
-    TerrainMaterial.ALBEDOCOLOR = Laya.Shader3D.propertyNameToID("u_AlbedoColor");
-    TerrainMaterial.ALBEDOTEXTURE = Laya.Shader3D.propertyNameToID("u_AlbedoTextrure");
-    TerrainMaterial.SECONDTEXTURE = Laya.Shader3D.propertyNameToID("u_SecondTexture");
-    TerrainMaterial.WIDTH = Laya.Shader3D.propertyNameToID("u_Width");
-    TerrainMaterial.DEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
-    TerrainMaterial.DEFINE_SECONDTEXTURE = Laya.Shader3D.getDefineByName("SECONDTEXTURE");
+    BonesMaterial.ALBEDOTEXTURE = Laya.Shader3D.propertyNameToID("u_AlbedoTexture");
+    BonesMaterial.ALBEDOCOLOR = Laya.Shader3D.propertyNameToID("u_AlbedoColor");
+    BonesMaterial.SHADERDEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
+
+    class LightingMaterial extends Laya.Material {
+        constructor() {
+            super();
+            this.setShaderName("MyLighting");
+            this.albedoColor = new Laya.Vector4(1, 1, 1, 1);
+        }
+        set albedoColor(value) {
+            this._shaderValues.setVector(LightingMaterial.ALBEDOCOLOR, value);
+        }
+        set albedoTexture(value) {
+            if (value) {
+                this._shaderValues.addDefine(LightingMaterial.SHADERDEFINE_ALBEDOTEXTURE);
+            }
+            else {
+                this._shaderValues.removeDefine(LightingMaterial.SHADERDEFINE_ALBEDOTEXTURE);
+            }
+            this._shaderValues.setTexture(LightingMaterial.ALBEDOTEXTURE, value);
+        }
+        set specularColor(value) {
+            this._shaderValues.setVector(LightingMaterial.SPECALARCOLOR, value);
+        }
+        set shininess(value) {
+            this._shaderValues.setNumber(LightingMaterial.SHINNESS, value);
+        }
+    }
+    LightingMaterial.ALBEDOCOLOR = Laya.Shader3D.propertyNameToID("u_AlbedoColor");
+    LightingMaterial.ALBEDOTEXTURE = Laya.Shader3D.propertyNameToID("u_AlbedoTexture");
+    LightingMaterial.SHINNESS = Laya.Shader3D.propertyNameToID("u_Shininess");
+    LightingMaterial.SPECALARCOLOR = Laya.Shader3D.propertyNameToID("u_SpecularColor");
+    LightingMaterial.SHADERDEFINE_ALBEDOTEXTURE = Laya.Shader3D.getDefineByName("ALBEDOTEXTURE");
 
     class GameUI extends ui.test.TestSceneUI {
         constructor() {
             super();
             this.gameScene = null;
             this.cube = null;
+            this.testLighting();
+            this.hSlider.on(Laya.Event.CHANGE, this, this.onChange);
+        }
+        testLighting() {
             this.gameScene = Laya.stage.addChild(new Laya.Scene3D());
+            this.gameScene.ambientColor = new Laya.Vector3(0.1, 0.1, 0);
             var camera = (this.gameScene.addChild(new Laya.Camera(0, 0.1, 100)));
             camera.transform.translate(new Laya.Vector3(0, 3, 3));
-            camera.transform.rotate(new Laya.Vector3(0, 0, 0), true, false);
+            camera.transform.rotate(new Laya.Vector3(-30, 0, 0), true, false);
             var directionLight = this.gameScene.addChild(new Laya.DirectionLight());
             directionLight.color = new Laya.Vector3(0.6, 0.6, 0.6);
             directionLight.transform.worldMatrix.setForward(new Laya.Vector3(1, -1, 0));
-            this.hSlider.on(Laya.Event.CHANGE, this, this.onChange);
-            Laya.loader.load([
-                "res/bg1.jpg",
-                "res/bg2.jpg"
-            ], Laya.Handler.create(this, this.onLoad3DComplete));
+            this.directionLight = directionLight;
+            var earth = this.gameScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createSphere(1.5, 64, 64)));
+            earth.transform.position = new Laya.Vector3(0, 0, -3);
+            this.earth = earth;
+            var material = new LightingMaterial();
+            Laya.Texture2D.load("res/layabox.png", Laya.Handler.create(null, function (tex) {
+                material.albedoTexture = tex;
+            }));
+            material.albedoColor = new Laya.Vector4(1, 1, 1, 1);
+            material.specularColor = new Laya.Vector4(1, 1, 1, 1);
+            material.shininess = 0.5;
+            earth.meshRenderer.sharedMaterial = material;
+        }
+        load3DResources(urls) {
+            Laya.loader.create(urls, Laya.Handler.create(this, this.onLoad3DComplete));
         }
         onLoad3DComplete() {
-            var box = this.gameScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createPlane(10, 20, 100, 100)));
-            box.transform.position = new Laya.Vector3(0, 0, -7);
-            var material = new TerrainMaterial();
-            material.albedoTexture = Laya.loader.getRes("res/bg1.jpg");
-            material.secondTexture = Laya.loader.getRes("res/bg2.jpg");
-            box.meshRenderer.material = material;
+            let player = Laya.loader.getRes("res/3DModels/player2/samuzai_animation_ok.lh");
+            player.transform.position = new Laya.Vector3(0, 0, 0);
+            player.transform.rotationEuler = new Laya.Vector3(0, 90, 0);
+            this.gameScene.addChild(player);
+            let animator = player.getComponent(Laya.Animator);
+            animator.play("attack");
+            var material = new BonesMaterial();
+            material.albedoTexture = Laya.loader.getRes("res/3DModels/player2/Assets/Character Pack/Texture/Body_Dif.jpg");
+            var material2 = new BonesMaterial();
+            material2.albedoTexture = Laya.loader.getRes("res/3DModels/player2/Assets/Character Pack/Texture/Head_DM3 .jpg");
+            let body = player.getChildByName('Plane007');
+            body.simpleSkinnedMeshRenderer.materials = [material, material2];
         }
         createBox() {
             this.cube = this.gameScene.addChild(new Laya.MeshSprite3D(Laya.PrimitiveMesh.createBox(1.3, 1.3, 1.3)));
@@ -138,9 +168,9 @@
             this.cube.meshRenderer.sharedMaterial = material2;
         }
         onChange() {
-            let width = this.hSlider.value / this.hSlider.max * 8.0;
-            let material = this.cube.meshRenderer.sharedMaterial;
-            material.width = width;
+            var value = this.hSlider.value * 0.01;
+            var material = this.earth.meshRenderer.sharedMaterial;
+            this.directionLight.transform.worldMatrix.setForward(new Laya.Vector3(1, -1 * value, 0));
         }
     }
 
@@ -185,9 +215,17 @@
 
     var MasicFs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n    precision highp float;\n#else\n    precision mediump float;\n#endif\n\nvarying vec2 v_TexCoord0;\n\nuniform vec4 u_AlbedoColor;\nuniform float u_MasicSize;\nuniform float u_TexSize;\n\n#ifdef ALBEDOTEXTURE\n    uniform sampler2D u_AlbedoTexture;\n#endif\n\nuniform float u_BlurWidth;\n\nvoid main(){\n    vec4 color = u_AlbedoColor;\n    vec2 texCoord = v_TexCoord0;\n\n\n    #ifdef ALBEDOTEXTURE\n        //正方块马赛克\n        // float width = u_TexSize;\n        // float rectSize = u_MasicSize;\n        // vec2 uv = texCoord * width;\n        // uv = floor(uv / rectSize) * rectSize;\n        // uv /= width;\n        // color *= texture2D(u_AlbedoTexture,uv);\n\n\n        //六边形的马赛克效果\n        float len = u_MasicSize / u_TexSize;\n        float TW = 1.0;\n        float TR = 1.73;\n        float x = v_TexCoord0.x;\n        float y = v_TexCoord0.y;\n\n        // float wx = floor(x / TW / len);\n        // float wy = floor(y / TR / len);\n\n        float wx = floor(x * u_TexSize / TW / u_MasicSize);\n        float wy = floor(y * u_TexSize / TR / u_MasicSize);\n\n        vec2 v1 = vec2(0.5 , 0.5);\n        vec2 v2 = vec2(0.5 , 0.6);\n\n        if(mod(wx + wy , 2.0) == 0.0){\n            v1 = vec2( wx * TW * len , wy * TR * len);\n            v2 = vec2((wx + 1.0) * TW * len , (wy + 1.0) * TR * len);\n        }else{\n            v1 = vec2( wx * TW * len , (wy + 1.0) * TR * len);\n            v2 = vec2( (wx + 1.0) * TW * len , wy * TR * len);\n        }\n        \n        float s1 = distance(v1 , v_TexCoord0);\n        float s2 = distance(v2 , v_TexCoord0);\n\n        if(s1 < s2)\n        {\n            texCoord = v1;\n        }\n        else\n        {\n            texCoord = v2;\n        }\n\n        color *= texture2D(u_AlbedoTexture , texCoord);\n    #endif\n    gl_FragColor = color ;\n}";
 
-    var TerrainVs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n    precision highp float;\n#else\n    precision mediump float;\n#endif\n\n\nuniform vec4 u_AlbedoColor;\n\n#ifdef ALBEDOTEXTURE\n    uniform sampler2D u_AlbedoTextrure;\n#endif\n\n#ifdef SECONDTEXTURE\n    uniform sampler2D u_SecondTexture;\n#endif\n\n\n// varying float v_Addy;\n// varying vec2 v_TexCoord0;\n\nvoid main(){\n    vec4 albedo = u_AlbedoColor;\n\n    // #ifdef ALBEDOTEXTURE\n    //     albedo *= texture2D(u_AlbedoTextrure, v_TexCoord0);\n    // #endif\n\n    // #ifdef SECONDTEXTURE\n    //     vec4 secondColor = texture2D(u_SecondTexture, v_TexCoord0);\n    //     float addy = v_Addy / 2.0;\n    //     albedo = mix(albedo, secondColor, addy);\n    // #endif\n\n    gl_FragColor = albedo;\n}";
+    var TerrainVs = "\n#include \"Lighting.glsl\";\n\nuniform mat4 u_MvpMatrix;\nuniform float u_Width;\nattribute vec4 a_Position;\nattribute vec2 a_TexCoord0;\n\nvarying vec2 v_TexCoord0;\nvarying float v_Addy;\n\nvoid main(){\n    v_TexCoord0 = a_TexCoord0;\n    float PI = 3.141592653589;\n    float len = distance(vec2(a_Position.x , a_Position.z) , vec2(0.0));\n    // len = clamp(len , 0.0 , u_Width);\n    float addy = sin(len * PI / u_Width) + 1.0;\n    vec4 position = vec4(a_Position.x , a_Position.y + addy , a_Position.z , a_Position.w);\n    v_Addy = addy;\n\n    gl_Position = u_MvpMatrix * position;\n    gl_Position = remapGLPositionZ(gl_Position);\n}";
 
-    var TerrainFs = "#include \"Lighting.glsl\";\n\nuniform mat4 u_MvpMatrix;\n// uniform float u_Width;\nattribute vec4 a_Position;\nattribute vec2 a_TexCoord0;\n\n// varying vec2 v_TexCoord0;\n// varying float v_Addy;\n\nvoid main()\n{\n    // v_TexCoord0 = a_TexCoord0;\n    // float PI = 3.141592653589;\n    // float len = distance(vec2(a_Position.x , a_Position.z) , vec2(0.0));\n    // len = clamp(len , 0.0 , u_Width);\n    // float addy = sin(len * PI / u_Width) + 1.0;\n    // vec4 position = vec4(a_Position.x , a_Position.y + addy , a_Position.z , a_Position.w);\n    // v_Addy = addy;\n\n    gl_Position = u_MvpMatrix * a_Position;\n    gl_Position = remapGLPositionZ(gl_Position);\n}";
+    var TerrainFs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n    precision highp float;\n#else\n    precision mediump float;\n#endif\n\n\nuniform vec4 u_AlbedoColor;\n\n#ifdef ALBEDOTEXTURE\n    uniform sampler2D u_AlbedoTextrure;\n#endif\n\n#ifdef SECONDTEXTURE\n    uniform sampler2D u_SecondTexture;\n#endif\n\n\nvarying float v_Addy;\nvarying vec2 v_TexCoord0;\n\nvoid main()\n{\n    vec4 albedo = u_AlbedoColor;\n\n    #ifdef ALBEDOTEXTURE\n        albedo *= texture2D(u_AlbedoTextrure, v_TexCoord0);\n    #endif\n\n    #ifdef SECONDTEXTURE\n        vec4 secondColor = texture2D(u_SecondTexture, v_TexCoord0);\n        float addy = v_Addy / 2.0;\n        albedo = mix(albedo, secondColor, addy);\n    #endif\n\n    gl_FragColor = albedo;\n}";
+
+    var BoneVs = "#include \"Lighting.glsl\";\n\n#ifdef GPU_INSTANCE\n    attribute mat4 a_MvpMatrix;\n#else\n    uniform mat4 u_MvpMatrix;\n#endif\n\nattribute vec4 a_Position;\n\nattribute vec2 a_TexCoord0;\n\nvarying vec2 v_TexCoord0;\n\n#ifdef BONE\n    attribute vec4 a_BoneIndices; //骨骼索引\n    attribute vec4 a_BoneWeights; //骨骼权重\n    uniform mat4 u_Bones[24]; // 骨骼矩阵数组\n\n    #ifdef SIMPLEBONE\n        uniform vec4 u_SimpleAnimatorParams; //动画数据\n        uniform float u_SimpleAnimatorTextureSize; //动画贴图的大小\n        uniform sampler2D u_SimpleAnimatorTexture; //骨骼动画贴图\n    #endif\n#endif\n\n#ifdef SIMPLEBONE\nmat4 loadMatFromTexture(float framePos , int boneIndices)\n{\n    vec2 uv;\n\n    float pixePos = framePos + float(boneIndices) * 4.0;\n\n    float han = floor(pixePos / u_SimpleAnimatorTextureSize); //行\n    float lie = mod(pixePos , u_SimpleAnimatorTextureSize); //列\n\n    float offset = 1.0 / u_SimpleAnimatorTextureSize;\n\n    uv.x = lie * offset + offset * 0.5;\n    uv.y = han * offset + offset * 0.5;\n\n    vec4 color0 = texture2D(u_SimpleAnimatorTexture , uv);\n\n    uv.x += offset;\n    vec4 color1 = texture2D(u_SimpleAnimatorTexture , uv);\n\n    uv.x += offset;\n    vec4 color2 = texture2D(u_SimpleAnimatorTexture , uv);\n\n    uv.x += offset;\n    vec4 color3 = texture2D(u_SimpleAnimatorTexture , uv);\n\n    mat4 m = mat4(color0.x , color0.y , color0.z , color0.w , \n                  color1.x , color1.y , color1.z , color1.w ,    \n                  color2.x , color2.y , color2.z , color2.w , \n                  color3.x , color3.y , color3.z , color3.w );\n\n    return m;\n}\n#endif\n\nvoid main()\n{\n    v_TexCoord0 = a_TexCoord0;\n\n    vec4 position = a_Position;\n\n    #ifdef BONE\n        mat4 boneMat;\n\n        #ifdef SIMPLEBONE\n            float framePos = u_SimpleAnimatorParams.x + u_SimpleAnimatorParams.y;\n\n            boneMat = loadMatFromTexture(framePos , int(a_BoneIndices.x)) * a_BoneWeights.x;\n            boneMat += loadMatFromTexture(framePos , int(a_BoneIndices.y)) * a_BoneWeights.y;\n            boneMat += loadMatFromTexture(framePos , int(a_BoneIndices.z)) * a_BoneWeights.z;\n            boneMat += loadMatFromTexture(framePos , int(a_BoneIndices.w)) * a_BoneWeights.w;\n        #else\n            boneMat = u_Bones[int(a_BoneIndices.x)] * a_BoneWeights.x;\n            boneMat += u_Bones[int(a_BoneIndices.y)] * a_BoneWeights.y;\n            boneMat += u_Bones[int(a_BoneIndices.z)] * a_BoneWeights.z;\n            boneMat += u_Bones[int(a_BoneIndices.w)] * a_BoneWeights.w;\n        #endif\n\n        position = boneMat * a_Position;\n    #endif\n\n    #ifdef GPU_INSTANCE\n\t\tgl_Position = a_MvpMatrix * position;\n\t#else\n\t\tgl_Position = u_MvpMatrix * position;\n\t#endif\n\n    gl_Position = remapGLPositionZ(gl_Position);\n}";
+
+    var BoneFs = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n\tprecision highp float;\n#else\n\tprecision mediump float;\n#endif\n\nuniform vec4 u_AlbedoColor;\n\n#ifdef ALBEDOTEXTURE\n\tuniform sampler2D u_AlbedoTexture;\n#endif\n\nvarying vec2 v_TexCoord0;\n\n\nvoid main()\n{\n    vec4 color =  u_AlbedoColor;\n\n    #ifdef ALBEDOTEXTURE\n\t\tcolor *= texture2D(u_AlbedoTexture, v_TexCoord0);\n\t#endif\n\n    gl_FragColor = color;\n}";
+
+    var LightingVS = "#include \"Lighting.glsl\";\n\nattribute vec4 a_Position;\nattribute vec2 a_TexCoord0;\nattribute vec3 a_Normal;\n\nuniform mat4 u_MvpMatrix;\nuniform mat4 u_WorldMat;\n\nvarying vec2 v_TexCoord0;\nvarying vec3 v_Normal;\nvarying vec3 v_Position;\n\nvoid main(){\n    mat3 _world2Object;\n\n    v_TexCoord0 = a_TexCoord0;\n\n    _world2Object = INVERSE_MAT(mat3(u_WorldMat));\n    v_Normal = normalize(a_Normal * _world2Object);\n\n    v_Position = (u_WorldMat * a_Position).xyz;\n\n    gl_Position = u_MvpMatrix * a_Position;\n    gl_Position = remapGLPositionZ(gl_Position);\n}";
+
+    var LightingFS = "#ifdef GL_FRAGMENT_PRECISION_HIGH\n    precision highp float;\n    precision highp int;\n#else\n    precision mediump float;\n    precision mediump int;\n#endif\n#include \"Lighting.glsl\";\n\nvarying vec2 v_TexCoord0;\nvarying vec3 v_Normal;\nvarying vec3 v_Position;\n\nuniform vec4 u_AlbedoColor;\n\nuniform vec4 u_AmbientColor ;//环境光\nuniform int u_DirationLightCount; // 平行光数量\nuniform sampler2D u_LightBuffer; // 灯光缓冲\n\nuniform vec3 u_CameraPos;\nuniform float u_Shininess;\nuniform vec4 u_SpecularColor;\n\n\n#ifdef ALBEDOTEXTURE\n    uniform sampler2D u_AlbedoTexture;\n#endif\n\nvoid main(){\n    vec4 mainColor = u_AlbedoColor;\n\n    #ifdef ALBEDOTEXTURE\n        vec4 color = texture2D(u_AlbedoTexture, v_TexCoord0);\n        mainColor *= color;\n    #endif\n\n    vec3 V = normalize(u_CameraPos - v_Position);\n\n    vec3 diffuse = vec3(0.0);\n    vec3 specular = vec3(0.0);\n\n    for(int i = 0; i < 20; i++){\n        if(i >= u_DirationLightCount) break;\n        DirectionLight directionLight = getDirectionLight(u_LightBuffer , i);\n        float ln = dot(v_Normal, directionLight.direction * -1.0);\n        ln = max(0.0, ln);\n\n        // ln = ln * 0.5 + 0.5;\n        diffuse += directionLight.color * ln;\n\n        // vec3 R = reflect(directionLight.direction , v_Normal);\n        // float nR = max(dot(V , R), 0.0);\n\n        //半角高光反射 blinPhong\n        vec3 H = normalize( V + directionLight.direction * -1.0 );\n        float nR = max(0.0 , dot(H , v_Normal));\n        \n        specular += u_SpecularColor.rgb * directionLight.color * pow(nR , u_Shininess * 128.0);\n    }\n\n    mainColor = vec4(mainColor.rbg * (u_AmbientColor.rgb + diffuse) , mainColor.a);\n    mainColor.rgb += specular;\n\n    gl_FragColor = mainColor;\n\n    \n}";
 
     class MyShader {
         static initShader() {
@@ -210,6 +248,8 @@
             this.initBlurMaterial();
             this.initMasicMaterial();
             this.initTerrainMaterial();
+            this.initBoneMaterial();
+            this.initLightingMaterial();
         }
         static initUVAniMaterial() {
             var attributeMap = {
@@ -291,11 +331,56 @@
                 'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
                 'u_AlbedoTextrure': Laya.Shader3D.PERIOD_MATERIAL,
                 'u_SecondTexture': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_Width': Laya.Shader3D.PERIOD_MATERIAL,
             };
             var shader = Laya.Shader3D.add("Terrain");
             var subShader = new Laya.SubShader(attributeMap, uniformMap);
             shader.addSubShader(subShader);
             subShader.addShaderPass(TerrainVs, TerrainFs);
+        }
+        static initBoneMaterial() {
+            var attributeMap = {
+                'a_Position': Laya.VertexMesh.MESH_POSITION0,
+                'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
+                'a_BoneIndices': Laya.VertexMesh.MESH_BLENDINDICES0,
+                'a_BoneWeights': Laya.VertexMesh.MESH_BLENDWEIGHT0,
+            };
+            var uniformMap = {
+                'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
+                'u_Bones': Laya.Shader3D.PERIOD_CUSTOM,
+                'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_SimpleAnimatorParams': Laya.Shader3D.PERIOD_SPRITE,
+                'u_SimpleAnimatorTextureSize': Laya.Shader3D.PERIOD_SPRITE,
+                'u_SimpleAnimatorTexture': Laya.Shader3D.PERIOD_SPRITE
+            };
+            var shader = Laya.Shader3D.add("Bones");
+            var subShader = new Laya.SubShader(attributeMap, uniformMap);
+            shader.addSubShader(subShader);
+            subShader.addShaderPass(BoneVs, BoneFs);
+        }
+        static initLightingMaterial() {
+            var attributeMap = {
+                'a_Position': Laya.VertexMesh.MESH_POSITION0,
+                'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
+                'a_Normal': Laya.VertexMesh.MESH_NORMAL0,
+            };
+            var uniformMap = {
+                'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
+                'u_WorldMat': Laya.Shader3D.PERIOD_SPRITE,
+                'u_CameraPos': Laya.Shader3D.PERIOD_CAMERA,
+                'u_DirationLightCount': Laya.Shader3D.PERIOD_SCENE,
+                'u_LightBuffer': Laya.Shader3D.PERIOD_SCENE,
+                'u_AmbientColor': Laya.Shader3D.PERIOD_SCENE,
+                'u_AlbedoColor': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_Shininess': Laya.Shader3D.PERIOD_MATERIAL,
+                'u_SpecularColor': Laya.Shader3D.PERIOD_MATERIAL
+            };
+            let shader = Laya.Shader3D.add("MyLighting");
+            let subShader = new Laya.SubShader(attributeMap, uniformMap);
+            shader.addSubShader(subShader);
+            subShader.addShaderPass(LightingVS, LightingFS);
         }
     }
 

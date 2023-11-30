@@ -1,0 +1,8 @@
+{
+	"front":"sunny2Cubmap_PositiveZ.png",
+	"back":"sunny2Cubmap_NegativeZ.png",
+	"left":"sunny2Cubmap_PositiveX.png",
+	"right":"sunny2Cubmap_NegativeX.png",
+	"up":"sunny2Cubmap_PositiveY.png",
+	"down":"sunny2Cubmap_NegativeY.png"
+}

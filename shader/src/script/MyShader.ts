@@ -28,6 +28,10 @@ import BoneFs from './Bone/Bones.fs';
 import LightingVS from './Lighting/Lighting.vs';
 import LightingFS from './Lighting/Lighting.fs';
 
+import RpgPlayerVs from './RpgPlayer/RpgPlayer.vs';
+import RpgPlayerFs from './RpgPlayer/RpgPlayer.fs';
+import RpgPlayerFs2 from './RpgPlayer/RpgPlayer2.fs';
+
 export default class MyShader {
 
 
@@ -56,6 +60,7 @@ export default class MyShader {
         this.initTerrainMaterial();
         this.initBoneMaterial();
         this.initLightingMaterial();
+        this.initRpgPlayerMaterial();
     }
 
     public static initUVAniMaterial() {
@@ -231,6 +236,36 @@ export default class MyShader {
         let subShader = new Laya.SubShader(attributeMap, uniformMap);
         shader.addSubShader(subShader);
         subShader.addShaderPass(LightingVS, LightingFS);
+    }
+
+    public static initRpgPlayerMaterial(): void {
+        var attributeMap = {
+            'a_Position': Laya.VertexMesh.MESH_POSITION0,
+            'a_TexCoord0': Laya.VertexMesh.MESH_TEXTURECOORDINATE0,
+        };
+
+        var uniformMap = {
+            'u_MvpMatrix': Laya.Shader3D.PERIOD_SPRITE,
+
+            'u_AlbedoTexture': Laya.Shader3D.PERIOD_MATERIAL
+        };
+
+        var stateMap = {
+            's_Blend': Laya.Shader3D.RENDER_STATE_BLEND,
+            's_BlendSrc': Laya.Shader3D.RENDER_STATE_BLEND_SRC,
+            's_BlendDst': Laya.Shader3D.RENDER_STATE_BLEND_DST,
+
+            's_DepthTest': Laya.Shader3D.RENDER_STATE_DEPTH_TEST
+        };
+
+        var shader = Laya.Shader3D.add("RpgPlayer");
+
+        var subShader = new Laya.SubShader(attributeMap, uniformMap);
+
+        shader.addSubShader(subShader);
+
+        subShader.addShaderPass(RpgPlayerVs, RpgPlayerFs);
+        subShader.addShaderPass(RpgPlayerVs, RpgPlayerFs2, stateMap)
     }
 
 
